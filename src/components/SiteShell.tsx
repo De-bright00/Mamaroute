@@ -9,7 +9,6 @@ const NAV = [
   { to: "/hospitals", label: "Hospitals" },
   { to: "/assistant", label: "AI Assistant" },
   { to: "/hotline", label: "Hotline" },
-  { to: "/credits", label: "Credits" },
   { to: "/hospital-onboarding", label: "For Hospitals" },
   { to: "/hospital-dashboard", label: "Dashboard" },
 ];
@@ -137,7 +136,6 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
               <li><Link to="/sos">Emergency SOS</Link></li>
               <li><Link to="/assistant">AI Assistant</Link></li>
               <li><Link to="/hospitals">Hospitals</Link></li>
-              <li><Link to="/credits">Credits & Top-up</Link></li>
             </ul>
           </div>
           <div>

@@ -1,11 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { Bot, Coins, CornerDownLeft, Loader2, Send, ShieldAlert, Sparkles, User, AlertCircle } from "lucide-react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Bot, Loader2, Send, User, AlertCircle } from "lucide-react";
 import { SiteShell } from "@/components/SiteShell";
 import { useAuth } from "@/hooks/useAuth";
-import { chatWithAssistant, countKnowledge } from "@/lib/assistant.functions";
+import { chatWithAssistant } from "@/lib/assistant.functions";
 
 export const Route = createFileRoute("/assistant")({
   head: () => ({
@@ -38,7 +37,6 @@ function Assistant() {
   const queryClient = useQueryClient();
   const { isAuthenticated, loading: authLoading } = useAuth();
   const chatFn = useServerFn(chatWithAssistant);
-  const countFn = useServerFn(countKnowledge);
 
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -78,10 +76,6 @@ function Assistant() {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, busy]);
 
-  const docCountQuery = useQuery({
-    queryKey: ["knowledge", "count"],
-    queryFn: () => countFn({}),
-  });
 
   const send = async (textToSend: string) => {
     if (!textToSend.trim() || busy) return;
@@ -116,48 +110,26 @@ function Assistant() {
     send(s);
   };
 
+  if (!authLoading && !isAuthenticated) {
+    return (
+      <SiteShell>
+        <section className="mx-auto max-w-md px-5 py-24 text-center space-y-4">
+          <Bot className="h-12 w-12 text-sos mx-auto" />
+          <h2 className="text-xl font-display font-bold text-primary">Sign in to chat with the assistant.</h2>
+          <p className="text-sm text-muted-foreground">Please log in to your patient account to access the AI maternal guide.</p>
+          <Link to="/auth" className="inline-flex rounded-xl bg-sos text-sos-foreground px-6 py-3 font-semibold shadow-sos hover:opacity-95 transition-opacity">
+            Sign in
+          </Link>
+        </section>
+      </SiteShell>
+    );
+  }
+
   return (
     <SiteShell>
-      <section className="mx-auto max-w-4xl px-5 py-6 grid md:grid-cols-4 gap-6 items-stretch min-h-[80vh]">
-        {/* Sidebar Info */}
-        <div className="md:col-span-1 rounded-2xl border border-border bg-card p-5 flex flex-col justify-between shadow-sm">
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-accent text-primary">
-                <Bot className="h-5 w-5" />
-              </span>
-              <h2 className="font-display font-bold text-primary text-sm">AI Assistant</h2>
-            </div>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Powered by OpenAI GPT-4o-mini and verified Nigerian maternal guidelines.
-            </p>
-            <div className="border-t border-border pt-4 space-y-3">
-              <div className="text-[10px] font-bold uppercase tracking-wider text-sos">System Status</div>
-              <div className="flex items-center gap-1.5 text-xs text-emerald-600 font-medium">
-                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                OpenAI Support Active
-              </div>
-              <div className="text-[10px] text-muted-foreground">
-                Knowledge Base: {docCountQuery.data?.count ?? 0} topics loaded
-              </div>
-            </div>
-          </div>
-
-          <div className="border-t border-border pt-4 mt-6">
-            <div className="rounded-xl bg-accent/60 p-3 text-center space-y-2">
-              <div className="flex items-center justify-center gap-1.5 text-xs font-semibold text-primary">
-                <Coins className="h-4 w-4 text-sos" /> Ledger Credits
-              </div>
-              <p className="text-[10px] text-muted-foreground">Free sandbox enabled for custom Supabase backends.</p>
-              <Link to="/credits" className="block text-xs font-bold text-sos hover:underline">
-                Manage Credits →
-              </Link>
-            </div>
-          </div>
-        </div>
-
+      <section className="mx-auto max-w-3xl px-5 py-6 min-h-[80vh] flex flex-col justify-center">
         {/* Chat Area */}
-        <div className="md:col-span-3 rounded-2xl border border-border bg-card flex flex-col justify-between overflow-hidden shadow-sm h-[75vh]">
+        <div className="rounded-2xl border border-border bg-card flex flex-col justify-between overflow-hidden shadow-sm h-[75vh]">
           {/* Header */}
           <div className="p-4 border-b border-border bg-accent/20 flex justify-between items-center">
             <div className="flex items-center gap-2">

@@ -16,7 +16,6 @@ import { Route as HotlineRouteImport } from './routes/hotline'
 import { Route as HospitalsRouteImport } from './routes/hospitals'
 import { Route as HospitalOnboardingRouteImport } from './routes/hospital-onboarding'
 import { Route as HospitalDashboardRouteImport } from './routes/hospital-dashboard'
-import { Route as CreditsRouteImport } from './routes/credits'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AssistantRouteImport } from './routes/assistant'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -58,11 +57,6 @@ const HospitalDashboardRoute = HospitalDashboardRouteImport.update({
   path: '/hospital-dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CreditsRoute = CreditsRouteImport.update({
-  id: '/credits',
-  path: '/credits',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -95,7 +89,6 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/assistant': typeof AssistantRoute
   '/auth': typeof AuthRoute
-  '/credits': typeof CreditsRoute
   '/hospital-dashboard': typeof HospitalDashboardRoute
   '/hospital-onboarding': typeof HospitalOnboardingRoute
   '/hospitals': typeof HospitalsRoute
@@ -110,7 +103,6 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/assistant': typeof AssistantRoute
   '/auth': typeof AuthRoute
-  '/credits': typeof CreditsRoute
   '/hospital-dashboard': typeof HospitalDashboardRoute
   '/hospital-onboarding': typeof HospitalOnboardingRoute
   '/hospitals': typeof HospitalsRoute
@@ -126,7 +118,6 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/assistant': typeof AssistantRoute
   '/auth': typeof AuthRoute
-  '/credits': typeof CreditsRoute
   '/hospital-dashboard': typeof HospitalDashboardRoute
   '/hospital-onboarding': typeof HospitalOnboardingRoute
   '/hospitals': typeof HospitalsRoute
@@ -143,7 +134,6 @@ export interface FileRouteTypes {
     | '/admin'
     | '/assistant'
     | '/auth'
-    | '/credits'
     | '/hospital-dashboard'
     | '/hospital-onboarding'
     | '/hospitals'
@@ -158,7 +148,6 @@ export interface FileRouteTypes {
     | '/admin'
     | '/assistant'
     | '/auth'
-    | '/credits'
     | '/hospital-dashboard'
     | '/hospital-onboarding'
     | '/hospitals'
@@ -173,7 +162,6 @@ export interface FileRouteTypes {
     | '/admin'
     | '/assistant'
     | '/auth'
-    | '/credits'
     | '/hospital-dashboard'
     | '/hospital-onboarding'
     | '/hospitals'
@@ -189,7 +177,6 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   AssistantRoute: typeof AssistantRoute
   AuthRoute: typeof AuthRoute
-  CreditsRoute: typeof CreditsRoute
   HospitalDashboardRoute: typeof HospitalDashboardRoute
   HospitalOnboardingRoute: typeof HospitalOnboardingRoute
   HospitalsRoute: typeof HospitalsRoute
@@ -251,13 +238,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HospitalDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/credits': {
-      id: '/credits'
-      path: '/credits'
-      fullPath: '/credits'
-      preLoaderRoute: typeof CreditsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -301,7 +281,6 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   AssistantRoute: AssistantRoute,
   AuthRoute: AuthRoute,
-  CreditsRoute: CreditsRoute,
   HospitalDashboardRoute: HospitalDashboardRoute,
   HospitalOnboardingRoute: HospitalOnboardingRoute,
   HospitalsRoute: HospitalsRoute,

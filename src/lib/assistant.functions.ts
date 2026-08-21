@@ -115,38 +115,6 @@ export const chatWithAssistant = createServerFn({ method: "POST" })
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    // Charge credits gracefully. Fallback if user_credits table or RPC functions are missing on the new backend
-    let balanceAfter = 99;
-    let chargeSuccessful = false;
-    try {
-      const { data: balance, error: deductError } = await supabaseAdmin.rpc("deduct_ai_credit", {
-        p_user_id: context.userId,
-        p_amount: 1,
-      });
-      if (deductError) {
-        if (deductError.message?.includes("INSUFFICIENT_CREDITS")) {
-          throw new Error("OUT_OF_CREDITS");
-        }
-        console.warn("Deduct credits RPC failed, allowing free request:", deductError.message);
-      } else {
-        balanceAfter = balance as number;
-        chargeSuccessful = true;
-      }
-    } catch (err) {
-      if (err instanceof Error && err.message === "OUT_OF_CREDITS") throw err;
-      console.warn("Could not check/deduct credit balance, defaulting to free request:", err);
-    }
-
-    const refund = async () => {
-      if (chargeSuccessful) {
-        try {
-          await supabaseAdmin.rpc("refund_ai_credit", { p_user_id: context.userId, p_amount: 1 });
-        } catch (e) {
-          console.error("Refund RPC failed:", e);
-        }
-      }
-    };
-
     try {
       const lastUser = [...data.messages].reverse().find((m) => m.role === "user");
       const retrieved = lastUser ? await retrieveKnowledge(lastUser.content, 3) : [];
@@ -173,27 +141,21 @@ export const chatWithAssistant = createServerFn({ method: "POST" })
 
       if (!res.ok) {
         const text = await res.text();
-        await refund();
-        if (res.status === 429) throw new Error("Too many requests. Please wait a moment and try again. Your credit was returned.");
-        if (res.status === 402) throw new Error("AI credits exhausted. Your credit was returned.");
-        throw new Error(`OpenAI error (${res.status}): ${text.slice(0, 200)}. Your credit was returned.`);
+        if (res.status === 429) throw new Error("Too many requests. Please wait a moment and try again.");
+        throw new Error(`OpenAI error (${res.status}): ${text.slice(0, 200)}.`);
       }
 
       const json = await res.json();
       const reply: string | undefined = json?.choices?.[0]?.message?.content;
       if (!reply) {
-        await refund();
-        throw new Error("The assistant could not generate a reply. Your credit was returned.");
+        throw new Error("The assistant could not generate a reply.");
       }
 
       return {
         reply,
-        balance: balanceAfter,
         sources: retrieved.map((r) => ({ source: r.source, similarity: r.similarity })),
       };
     } catch (e) {
-      if (e instanceof Error && e.message.includes("Your credit was returned")) throw e;
-      await refund();
-      throw new Error(e instanceof Error ? e.message : "Something went wrong talking to the assistant. Your credit was returned.");
+      throw new Error(e instanceof Error ? e.message : "Something went wrong talking to the assistant.");
     }
   });
