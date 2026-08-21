@@ -177,6 +177,21 @@ function SOS() {
 
   const blockedLocation = started && perm !== "granted";
 
+  const handleSosTap = async () => {
+    setStarted(true);
+    // capture location if possible
+    if (perm !== "granted") {
+      requestLocation();
+    }
+    // automatically submit the emergency log
+    await submit();
+    
+    // immediately trigger browser dialing for the nearest hospital
+    const hospital = getNearestHospital();
+    const cleanPhone = hospital.phone.replace(/[^0-9+]/g, "");
+    window.location.href = `tel:${cleanPhone}`;
+  };
+
   return (
     <SiteShell>
       {blockedLocation && (
@@ -219,7 +234,7 @@ function SOS() {
         {!started && (
           <div className="mt-8 flex flex-col items-center">
             <button
-              onClick={() => { setStarted(true); if (perm !== "granted") requestLocation(); }}
+              onClick={handleSosTap}
               className="relative h-52 w-52 rounded-full bg-sos text-sos-foreground shadow-sos pulse-ring active:scale-95 transition-transform cursor-pointer"
             >
               <div className="absolute inset-0 flex flex-col items-center justify-center">
