@@ -33,6 +33,7 @@ const EMERGENCY_KEYWORDS = [
 ];
 
 function Assistant() {
+  const navigate = useNavigate();
   const { isAuthenticated, loading: authLoading } = useAuth();
   const chatFn = useServerFn(chatWithAssistant);
 
