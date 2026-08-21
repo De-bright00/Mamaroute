@@ -238,20 +238,4 @@ function Assistant() {
   );
 }
 
-function Card({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div className="mt-8 rounded-2xl border border-border bg-card p-6 shadow-sm">
-      <h3 className="font-display font-semibold text-lg text-primary">{title}</h3>
-      {children}
-    </div>
-  );
-}
 
-function Item({ done, label }: { done: boolean; label: string }) {
-  return (
-    <li className="flex items-start gap-3">
-      <CheckCircle2 className={`h-4 w-4 mt-0.5 ${done ? "text-sos" : "text-muted-foreground/30"}`} />
-      <span className={done ? "text-foreground" : "text-muted-foreground"}>{label}</span>
-    </li>
-  );
-}
