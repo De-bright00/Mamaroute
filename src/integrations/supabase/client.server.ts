@@ -16,7 +16,13 @@ function createSupabaseAdminClient() {
     ];
     const message = `Missing Supabase environment variable(s): ${missing.join(', ')}. Please configure them in your environment variables.`;
     console.error(`[Supabase] ${message}`);
-    throw new Error(message);
+    return createClient<Database>('https://placeholder-url.supabase.co', 'placeholder-key', {
+      auth: {
+        storage: undefined,
+        persistSession: false,
+        autoRefreshToken: false,
+      }
+    });
   }
 
   return createClient<Database>(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
