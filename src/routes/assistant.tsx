@@ -27,13 +27,14 @@ const SUGGESTIONS = [
 
 // Keywords that indicate clinical emergencies
 const EMERGENCY_KEYWORDS = [
-  "blood", "bleed", "bleeding", "pain", "severe", "headache", "vision", "cramp", 
-  "contraction", "break", "rupture", "faint", "dizzy", "unconscious", "emergency", 
+  "blood", "bleed", "bleeding", "pain", "severe", "headache", "vision", "cramp",
+  "contraction", "break", "rupture", "faint", "dizzy", "unconscious", "emergency",
   "convulsion", "seizure", "cramping"
 ];
 
 function Assistant() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { isAuthenticated, loading: authLoading } = useAuth();
   const chatFn = useServerFn(chatWithAssistant);
 
@@ -52,7 +53,7 @@ function Assistant() {
 
   // Monitor typing to detect emergency keywords in real-time
   useEffect(() => {
-    const hasEmergencyWord = EMERGENCY_KEYWORDS.some(word => 
+    const hasEmergencyWord = EMERGENCY_KEYWORDS.some(word =>
       input.toLowerCase().includes(word)
     );
     setShowSosAlert(hasEmergencyWord);
@@ -62,7 +63,7 @@ function Assistant() {
   useEffect(() => {
     const lastUserMsg = [...messages].reverse().find(m => m.role === "user");
     if (lastUserMsg) {
-      const hasEmergencyWord = EMERGENCY_KEYWORDS.some(word => 
+      const hasEmergencyWord = EMERGENCY_KEYWORDS.some(word =>
         lastUserMsg.content.toLowerCase().includes(word)
       );
       if (hasEmergencyWord) {
@@ -146,14 +147,12 @@ function Assistant() {
               const isAi = m.role === "assistant";
               return (
                 <div key={i} className={`flex gap-3 max-w-[85%] ${isAi ? "mr-auto" : "ml-auto flex-row-reverse"}`}>
-                  <span className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-xs font-bold ${
-                    isAi ? "bg-accent text-primary" : "bg-sos text-sos-foreground"
-                  }`}>
+                  <span className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-xs font-bold ${isAi ? "bg-accent text-primary" : "bg-sos text-sos-foreground"
+                    }`}>
                     {isAi ? <Bot className="h-4 w-4" /> : <User className="h-4 w-4" />}
                   </span>
-                  <div className={`rounded-2xl px-4 py-2.5 text-sm leading-relaxed shadow-sm ${
-                    isAi ? "bg-card text-foreground border border-border" : "bg-sos text-sos-foreground"
-                  }`}>
+                  <div className={`rounded-2xl px-4 py-2.5 text-sm leading-relaxed shadow-sm ${isAi ? "bg-card text-foreground border border-border" : "bg-sos text-sos-foreground"
+                    }`}>
                     {m.content}
                   </div>
                 </div>
@@ -179,7 +178,7 @@ function Assistant() {
                 <AlertCircle className="h-4 w-4 shrink-0" />
                 <span>Maternal emergency indicator detected. Clinical attention may be required.</span>
               </div>
-              <button 
+              <button
                 onClick={() => navigate({ to: "/sos" })}
                 className="shrink-0 rounded-lg bg-sos text-sos-foreground px-3 py-1.5 text-xs font-bold shadow-sos hover:opacity-95 cursor-pointer"
               >
